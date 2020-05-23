@@ -3,8 +3,9 @@
 
 int main() {
   ServerConfig cfg;
-  cfg.enable_log = false;
-  cfg.timeout_secs_ = 1;
+  cfg.enable_log = true;
+  cfg.timeout_secs = 1;
+  cfg.logger = "log.txt";
   Server svr(cfg);
   svr.Listen();
   return 0;

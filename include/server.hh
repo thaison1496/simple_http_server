@@ -41,6 +41,7 @@ private:
   epoll_event* events_;
   // Map from client_fd to Connection obj
   std::unordered_map<int, Connection*> conn_map_;
+  std::unique_ptr<Logger> logger_;
   // Shared read buffer, need 1 buffer for each thread
   char* buffer_;
   std::vector<Router> routes_;
