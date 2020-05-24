@@ -63,6 +63,15 @@ void Server::Route(
 
 
 void Server::Listen() {
+  int n = cfg_.num_threads;
+  int seq_num = 0;
+  for (int i = 0; i < n; ++i) {
+    // No thread join or detach, right now only way to 
+    // stop server is halt program
+    auto server_thread = ServerThread();
+    threads_.emplace_back(std::thread(std::ref(server_thread)));;
+  }
+
   while (true) {
     int num_fds = epoll_wait(epoll_fd_, events_, 64, 1000);
     if (num_fds == -1) {continue;}

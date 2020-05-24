@@ -1,12 +1,15 @@
 #pragma once
 
-#include <unistd.h>
 #include <vector>
 #include <unordered_map>
+#include <thread>
+#include <mutex>
+#include <queue>
 
 #include "utils.hh"
 #include "connection.hh"
 #include "router.hh"
+#include "server_thread.hh"
 
 class Server {
 public:
@@ -39,4 +42,7 @@ private:
   // Shared read buffer, need 1 buffer for each thread
   char* buffer_;
   std::vector<Router> routes_;
+  std::vector<std::thread> threads_;
+  // std::vector<std::mutex> mutexs_;
+  // std::vector<std::queue<epoll_event> > fd_queues_;
 };
