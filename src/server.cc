@@ -1,3 +1,4 @@
+#include <chrono>
 #include <unistd.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
@@ -66,6 +67,7 @@ void Server::Listen() {
     int num_fds = epoll_wait(epoll_fd_, events_, 64, 1000);
     if (num_fds == -1) {continue;}
 
+    logger_->Log("num_fds: %d\n", num_fds);
     // iterate signaled fds
     for (int i = 0; i < num_fds; i++) {
       // notifications on listening fd are incoming client connections
@@ -75,14 +77,14 @@ void Server::Listen() {
         ProcessEvent(events_[i]);
       }
     }
-    
+
     // Clear timed-out connections
     // Estimation, only call get time once
     uint32_t time_now = time(nullptr);
     for (auto itr = conn_map_.begin(); itr != conn_map_.end();) {
       auto& conn = itr->second;
       if (Timeout(conn, time_now)) {
-        logger_->Log("[+] server close fd: %d\n", conn->fd_);
+        logger_->Log("server close fd: %d\n", conn->fd_);
         close(conn->fd_);
         delete conn;
         itr = conn_map_.erase(itr);
@@ -100,6 +102,7 @@ void Server::AcceptConnection() {
 
   int client_fd = accept(listen_fd_, 
       reinterpret_cast<sockaddr*>(&client_sin), &sin_size);
+
   if (client_fd == -1) {
     logger_->Log("accept() failed, error code: %d\n", errno);
     return;
@@ -125,7 +128,7 @@ void Server::AcceptConnection() {
     return;
   }
 
-  logger_->Log("[+] new client: %s:%d %d\n",
+  logger_->Log("new client: %s:%d %d\n",
       inet_ntoa(client_sin.sin_addr),
       ntohs(client_sin.sin_port),
       client_fd);
@@ -135,7 +138,7 @@ void Server::AcceptConnection() {
 void Server::ProcessEvent(const epoll_event& ev) {
   auto conn = reinterpret_cast<Connection*>(ev.data.ptr);
   if (!conn->HandleEvent(ev)) {
-    logger_->Log("[+] client close fd: %d\n", conn->fd_);
+    logger_->Log("client close fd: %d\n", conn->fd_);
     CloseConnection(conn->fd_);
   }
 }

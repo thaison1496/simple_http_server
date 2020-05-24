@@ -1,5 +1,5 @@
 #pragma once
 
-class Request {
-
+struct Request {
+  Request(const char* msg);
 };

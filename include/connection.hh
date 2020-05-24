@@ -13,7 +13,9 @@ public:
 
   bool HandleEvent(const epoll_event& ev);
 
-  void ReadData();
+  int ReadData();
+
+  bool WriteReady();
 
   void SendResponse();
   
@@ -22,6 +24,6 @@ public:
   const int buffer_size_;
   uint32_t last_active_;
   std::string message_;
-  Request* req_;
-  Response* res_;
+  std::unique_ptr<Request> req_;
+  std::unique_ptr<Response> res_;
 };

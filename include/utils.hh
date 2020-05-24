@@ -8,6 +8,7 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <chrono>
 
 using std::vector;
 using std::string;
@@ -50,17 +51,21 @@ class FileLogger : public Logger {
 public:
   FileLogger(string file_name) {   
     p_file = fopen(file_name.c_str(), "w");
+    time_begin = std::chrono::steady_clock::now();
   }
 
   virtual void Log(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
+    fprintf(p_file, "[%ld]", std::chrono::duration_cast<std::chrono::microseconds>
+        (std::chrono::steady_clock::now() - time_begin).count());
     vfprintf(p_file, fmt, args);
     va_end(args);
   }
 
 private:
   FILE* p_file;
+  std::chrono::steady_clock::time_point time_begin;
 };
 
 

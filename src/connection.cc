@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string>
+#include <memory>
 
 #include "connection.hh"
 
@@ -21,15 +22,22 @@ bool Connection::HandleEvent(const epoll_event& ev) {
 
   // we got some data from the client
   if (ev.events & EPOLLIN) {
-    message_.clear();
-    ReadData();
-    // client triggered EPOLLIN but sent no data
-    // (usually due to remote socket being closed)
-    if (message_.empty()) {
+    // message_.clear();
+    int bytes_read = ReadData();
+    if (bytes_read == -1) {
+      // Message bigger than buffer size
+      return false;
+    } else if (bytes_read == 0) {
+      // client triggered EPOLLIN but sent no data
+      // (usually due to remote socket being closed)
       return false;
     }
+    // Reset request obj
+    req_ = std::make_unique<Request>(buffer_);
+    // Reset response obj
+    res_ = std::make_unique<Response>();
     SendResponse();
-    return true;
+    return false;
   }
 
   // the client closed the connection
@@ -38,32 +46,26 @@ bool Connection::HandleEvent(const epoll_event& ev) {
     return false;
   }
 
-  // fd is ready to be written
-  // if (ev.events & EPOLLOUT) {
-  //   SendResponse();
-  //   return true;
-  // }
   return false;
 }
 
 
-void Connection::ReadData() {
+int Connection::ReadData() {
   int bytes_read;
   // must drain the entire read buffer as we won't
   // get another event until client sends more data
-  while (true) {
-    bytes_read = recv(fd_, buffer_, static_cast<size_t>(buffer_size_), 0);
-    if (bytes_read <= 0)
-      break;
-    message_.append(buffer_, static_cast<size_t>(bytes_read));
-  }
+  bytes_read = recv(fd_, buffer_, static_cast<size_t>(buffer_size_), 0);
+  if (bytes_read == buffer_size_) {return -1;}
+  buffer_[bytes_read] = '\0';
+  return bytes_read;
 }
 
 
+bool Connection::WriteReady() {
+
+}
+
 void Connection::SendResponse() {
-  // just echo back
-  // write(fd_, message_.c_str(), message_.size());
-  res_ = new Response();
   std::string response = res_->ConstructResponse().c_str();
   write(fd_, response.c_str(), response.size());
 }
