@@ -4,8 +4,9 @@
 #include <vector>
 #include <unordered_map>
 
-#include "connection.hh"
 #include "utils.hh"
+#include "connection.hh"
+#include "router.hh"
 
 class Server {
 public:
@@ -28,13 +29,6 @@ private:
   void CloseConnection(int client_fd);
 
   inline bool Timeout(Connection* conn, uint32_t time_now);
-
-  template <typename... Args>
-  void WriteLog(Args&&... args) {
-    if (cfg_.enable_log) {
-      printf(std::forward<Args>(args)...);
-    }
-  }
 
   const ServerConfig& cfg_;
   int listen_fd_, epoll_fd_;

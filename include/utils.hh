@@ -1,6 +1,4 @@
-// #pragma once
-#ifndef CPPSERVER_HTTP_HTTP_REQUEST_H
-#define CPPSERVER_HTTP_HTTP_REQUEST_H
+#pragma once
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -11,12 +9,8 @@
 #include <functional>
 #include <memory>
 
-#include "request.hh"
-#include "response.hh"
-
 using std::vector;
 using std::string;
-using Handler = std::function<void(const Request&, Response&)>;
 
 struct ServerConfig {
   string addr = "0.0.0.0";
@@ -26,13 +20,6 @@ struct ServerConfig {
   bool enable_log = true;
   uint32_t timeout_secs = 5;
   string logger = "";
-};
-
-
-struct Router {
-  vector<string> allowed_methods;
-  string uri;
-  Handler handler;
 };
 
 
@@ -99,5 +86,3 @@ inline bool SetNonblocking(int fd) {
 
   return true;
 }
-
-#endif // CPPSERVER_HTTP_HTTP_REQUEST_H

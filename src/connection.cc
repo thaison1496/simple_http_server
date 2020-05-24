@@ -62,7 +62,10 @@ void Connection::ReadData() {
 
 void Connection::SendResponse() {
   // just echo back
-  write(fd_, message_.c_str(), message_.size());
+  // write(fd_, message_.c_str(), message_.size());
+  res_ = new Response();
+  std::string response = res_->ConstructResponse().c_str();
+  write(fd_, response.c_str(), response.size());
 }
 
 
