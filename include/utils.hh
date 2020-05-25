@@ -16,7 +16,7 @@ using std::string;
 struct ServerConfig {
   string addr = "0.0.0.0";
   uint16_t port = 1337;
-  uint32_t num_threads = 1;
+  size_t num_threads = 1;
   size_t buffer_size = 8096;
   bool enable_log = true;
   uint32_t timeout_secs = 5;
@@ -57,7 +57,7 @@ public:
   virtual void Log(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    fprintf(p_file, "[%ld]", std::chrono::duration_cast<std::chrono::microseconds>
+    fprintf(p_file, "[%ld] ", std::chrono::duration_cast<std::chrono::microseconds>
         (std::chrono::steady_clock::now() - time_begin).count());
     vfprintf(p_file, fmt, args);
     va_end(args);
@@ -69,13 +69,13 @@ private:
 };
 
 
-inline std::unique_ptr<Logger> CreateLogger(string logger_type) {
+inline std::shared_ptr<Logger> CreateLogger(string logger_type) {
   if (logger_type.empty()) {
-    return std::unique_ptr<Logger>(new NullLogger());
+    return std::shared_ptr<Logger>(new NullLogger());
   } else if (logger_type == "stdout") {
-    return std::unique_ptr<Logger>(new StdoutLogger());
+    return std::shared_ptr<Logger>(new StdoutLogger());
   }
-  return std::unique_ptr<Logger>(new FileLogger(logger_type));
+  return std::shared_ptr<Logger>(new FileLogger(logger_type));
 }
 
 

@@ -61,10 +61,6 @@ int Connection::ReadData() {
 }
 
 
-bool Connection::WriteReady() {
-
-}
-
 void Connection::SendResponse() {
   std::string response = res_->ConstructResponse().c_str();
   write(fd_, response.c_str(), response.size());

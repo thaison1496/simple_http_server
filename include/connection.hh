@@ -15,8 +15,6 @@ public:
 
   int ReadData();
 
-  bool WriteReady();
-
   void SendResponse();
   
   int fd_;
