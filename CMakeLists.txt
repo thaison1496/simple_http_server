@@ -12,5 +12,7 @@ add_compile_options(-Wfatal-errors)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cc)
-add_executable(http_server ${SRC_FILES})
-target_link_libraries(http_server pthread)
+add_library(simplehttpserver SHARED ${SRC_FILES})
+
+add_executable(example1 examples/example1.cc)
+target_link_libraries(example1 simplehttpserver pthread)

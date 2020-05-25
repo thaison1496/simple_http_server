@@ -7,11 +7,13 @@
 
 #include "server_thread.hh"
 
-ServerThread::ServerThread(int listen_fd, int epoll_listen_fd, std::shared_ptr<Logger> logger, const ServerConfig& cfg) : 
+ServerThread::ServerThread(int listen_fd, int epoll_listen_fd, std::shared_ptr<Logger> logger,
+    const ServerConfig& cfg, std::vector<Route> routes) : 
     listen_fd_(listen_fd),
     epoll_listen_fd_(epoll_listen_fd),
     logger_(logger),
-    cfg_(cfg) {
+    cfg_(cfg),
+    routes_(routes) {
   buffer_ = std::unique_ptr<char[]>(new char[cfg_.buffer_size]);
   epoll_fd_ = epoll_create1(0);
   if (epoll_fd_ == -1) {
@@ -76,7 +78,7 @@ void ServerThread::AcceptConnection() {
   ev.events = EPOLLIN | EPOLLRDHUP | EPOLLET;
 
   // initialize new connection
-  auto conn = new Connection(client_fd, buffer_.get(), cfg_.buffer_size);
+  auto conn = new Connection(client_fd, buffer_.get(), cfg_.buffer_size, routes_);
   ev.data.ptr = conn;
   conn_map_[client_fd] = conn;
 

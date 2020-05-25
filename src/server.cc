@@ -58,11 +58,11 @@ Server::Server(const ServerConfig& cfg) :
 }
 
 
-void Server::Route(
+void Server::AddRoute(
     vector<string> allowed_methods,
-    string uri,
+    string pattern,
     Handler handler) {
-  Router route{allowed_methods, uri, handler};
+  Route route{allowed_methods, pattern, handler};
   routes_.emplace_back(route);
 }
 
@@ -71,7 +71,7 @@ void Server::Listen() {
   size_t n = cfg_.num_threads;
   // size_t seq_num = 0;
   for (size_t i = 0; i < n; ++i) {
-    auto ptr = std::make_shared<ServerThread>(listen_fd_, epoll_fd_, logger_, cfg_);
+    auto ptr = std::make_shared<ServerThread>(listen_fd_, epoll_fd_, logger_, cfg_, routes_);
     server_threads_.emplace_back(ptr);
     threads_.emplace_back(std::thread(std::ref(*ptr)));;
   }

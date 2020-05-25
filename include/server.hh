@@ -8,7 +8,7 @@
 
 #include "utils.hh"
 #include "connection.hh"
-#include "router.hh"
+#include "data_types.hh"
 #include "server_thread.hh"
 
 class Server {
@@ -17,7 +17,7 @@ public:
 
   void Listen();
 
-  void Route(
+  void AddRoute(
       std::vector<std::string> allowed_methods, 
       string uri,
       Handler handler);
@@ -30,7 +30,7 @@ private:
   const ServerConfig& cfg_;
   int listen_fd_, epoll_fd_;
   std::shared_ptr<Logger> logger_;
-  std::vector<Router> routes_;
+  Routes routes_;
   std::vector<std::shared_ptr<ServerThread> > server_threads_;
   std::vector<std::thread> threads_;
 };
