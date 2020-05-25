@@ -8,4 +8,4 @@ Request ParseHttpRequest(const char* buffer, size_t buffer_size);
 
 std::string ConstructHttpResponse(const Response& res);
 
-}
+}  // namespace http_parser

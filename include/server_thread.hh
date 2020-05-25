@@ -3,19 +3,20 @@
 #define EPOLL_EVENT_ARRAY_SZ 64
 
 #include <memory>
+#include <mutex>
 #include <unordered_map>
-#include <mutex> 
 
-#include "utils.hh"
 #include "connection.hh"
 #include "data_types.hh"
+#include "utils.hh"
 
 class ServerThread {
-public:
-  ServerThread(int listen_fd, int epoll_listen_fd, std::shared_ptr<Logger> logger,
-      const ServerConfig& cfg, std::vector<Route> routes);
+ public:
+  ServerThread(int listen_fd, int epoll_listen_fd,
+               std::shared_ptr<Logger> logger, const ServerConfig& cfg,
+               std::vector<Route> routes);
 
-  void operator() ();
+  void operator()();
 
   void AcceptConnection();
 
@@ -25,7 +26,7 @@ public:
 
   void CloseConnection(int client_fd);
 
-private:
+ private:
   const int listen_fd_;
   const int epoll_listen_fd_;
   std::shared_ptr<Logger> logger_;

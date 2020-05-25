@@ -1,13 +1,13 @@
 #pragma once
 
-#include <unistd.h>
 #include <sys/epoll.h>
+#include <unistd.h>
 
 #include "data_types.hh"
 
 // Handle a TCP connection to a client (read, write, close, timeout)
 class Connection {
-public:
+ public:
   Connection(int fd, char* buffer, const int buffer_size, const Routes& route);
 
   bool HandleEvent(const epoll_event& ev);
@@ -17,7 +17,7 @@ public:
   void FindHandler();
 
   void SendResponse();
-  
+
   int fd_;
   char* buffer_;
   const int buffer_size_;
