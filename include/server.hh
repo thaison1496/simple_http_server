@@ -1,28 +1,26 @@
 #pragma once
 
-#include <vector>
-#include <unordered_map>
-#include <thread>
 #include <mutex>
 #include <queue>
+#include <thread>
+#include <unordered_map>
+#include <vector>
 
-#include "utils.hh"
 #include "connection.hh"
 #include "data_types.hh"
 #include "server_thread.hh"
+#include "utils.hh"
 
 class Server {
-public:
+ public:
   Server(const ServerConfig& cfg);
 
   void Listen();
 
-  void AddRoute(
-      std::vector<std::string> allowed_methods, 
-      string uri,
-      Handler handler);
+  void AddRoute(std::vector<std::string> allowed_methods, string uri,
+                Handler handler);
 
-private:
+ private:
   void AcceptConnection();
 
   void CloseConnection(int client_fd);
