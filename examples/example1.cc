@@ -21,11 +21,11 @@ int main() {
 
   svr.AddRoute({"GET", "POST"}, "/echo", [](const Request& req, Response& res) {
     std::stringstream ss;
-    ss << "Echo headers: \n";
+    ss << "<pre>Echo headers: \n";
     for (auto& header : req.headers) {
-      ss << header.name << ": " << header.value << "\r\n";
+      ss << header.name << ": " << header.value << "\n";
     }
-    ss << "\nEcho content: \n" << req.content;
+    ss << "\nEcho content: \n</pre>" << req.content;
     res.content = ss.str();
   });
 
